@@ -46,27 +46,31 @@
         <!-- Ici seront affichées les équipes existantes -->
     </div>
 
+    <!-- en attente -- >
+
     <h2>Ajouter une équipe</h2>
     <form id="add-team-form">
         <input type="text" id="team-name" placeholder="Nom de l'équipe" required>
         <input type="text" id="team-city" placeholder="Ville de l'équipe" required>
         <button type="submit">Ajouter</button>
-    </form>
+    </form> 
+    
+    < -- en attente -->
 
     <button id="check-connection">Vérifier la connexion</button>
     <div id="status-message"></div>
 
-    <script>
+    <script> 
         // Fonction pour vérifier la connexion à l'API
-        $('#check-connection').click(function() {
+        $('#check-connection').click(function() { 
             $.ajax({
-                url: 'http://localhost:7162/EquipeTop14', // Endpoint à utiliser pour la vérification de la connexion
+                url: 'https://localhost:7162/EquipeTop14', // Endpoint à utiliser pour la vérification de la connexion
                 type: 'POST',
                 contentType: 'multipart/form-data',
                 data: {
-                    user: 'admin', // Utilisateur et mot de passe fictifs pour la démonstration
-                    password: 'password'
-                },
+                    user: 'Thib', 
+                    password: 'Equipe14'
+                }, 
                 success: function(response) {
                     console.log('Connexion réussie:', response);
                     showStatusMessage('Connexion établie avec succès.', 'success');
@@ -81,7 +85,7 @@
         // Fonction pour charger les équipes depuis l'API
         function loadTeams() {
             $.ajax({
-                url: 'http://localhost:7162/EquipeTop14',
+                url: 'https://localhost:7162/Equipe',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -128,7 +132,7 @@
             };
 
             $.ajax({
-                url: 'http://localhost:7162/EquipeTop14',
+                url: 'https://localhost:7162/Equipe',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(newTeam),
