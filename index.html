@@ -64,13 +64,15 @@
         // Fonction pour vérifier la connexion à l'API
         $('#check-connection').click(function() { 
             $.ajax({
-                url: 'https://localhost:7162/EquipeTop14', // Endpoint à utiliser pour la vérification de la connexion
+                url: 'https://localhost:7162/swagger', // Endpoint à utiliser pour la vérification de la connexion
                 type: 'POST',
                 contentType: 'multipart/form-data',
+                /*
                 data: {
                     user: 'Thib', 
                     password: 'Equipe14'
                 }, 
+                */
                 success: function(response) {
                     console.log('Connexion réussie:', response);
                     showStatusMessage('Connexion établie avec succès.', 'success');
