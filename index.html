@@ -1,161 +1,79 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
-    <title>Équipes Top 14</title>
+    <title>Équipes Top 14 - Accueil</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .team {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-        .team h2 {
-            margin-bottom: 5px;
-        }
-        .team p {
-            margin-top: 5px;
-        }
-        form {
-            margin-top: 20px;
-        }
-        form input, form button {
-            margin: 5px;
-            padding: 5px;
-        }
-        #status-message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .success {
-            background-color: #28a745;
-            color: #fff;
-        }
-        .error {
-            background-color: #dc3545;
-            color: #fff;
-        }
-    </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet"> <!-- Référence au fichier CSS externe -->
 </head>
-<body>
-    <h1>Équipes Top 14</h1>
 
-    <div id="teams-container">
-        <!-- Ici seront affichées les équipes existantes -->
+<body class="text-center d-flex align-items-center cover-container">
+    <div class="cover-container mx-auto">
+        <main role="main" class="inner cover">
+            <h1 class="cover-heading">Bienvenue dans l'application Équipes Top 14</h1>
+            <p class="lead">Grâce à cette application vous pourrez :</p>
+            <ul class="lead text-left">
+                <li>Voir toutes les équipes du Top 14</li>
+                <li>Ajouter des équipes</li>
+                <li>Modifier des équipes</li>
+                <li>Supprimer des équipes</li>
+                <li>Effectuer les mêmes actions pour les joueurs !</li>
+            </ul>
+            <div class="mt-4">
+                <button id="check-connection" class="btn btn-lg btn-secondary mr-2">Vérifier la connexion</button>
+                <button id="go-to-http-page" class="btn btn-lg btn-primary">Aller sur la page des requêtes</button>
+            </div>
+            <div id="status-message" class="mt-3"></div>
+        </main>
     </div>
 
-    <!-- en attente -- >
 
-    <h2>Ajouter une équipe</h2>
-    <form id="add-team-form">
-        <input type="text" id="team-name" placeholder="Nom de l'équipe" required>
-        <input type="text" id="team-city" placeholder="Ville de l'équipe" required>
-        <button type="submit">Ajouter</button>
-    </form> 
-    
-    < -- en attente -->
+    <script>
+        var token = ''; // Variable globale pour stocker le token
 
-    <button id="check-connection">Vérifier la connexion</button>
-    <div id="status-message"></div>
-
-    <script> 
         // Fonction pour vérifier la connexion à l'API
-        $('#check-connection').click(function() { 
+        $('#check-connection').click(function () {
+            var formData = new FormData();
+            formData.append("user", "Thib");
+            formData.append("password", "Equipe14");
+
             $.ajax({
-                url: 'https://localhost:7162/swagger', // Endpoint à utiliser pour la vérification de la connexion
+                url: 'https://localhost:7162/Auth',
                 type: 'POST',
-                contentType: 'multipart/form-data',
-                /*
-                data: {
-                    user: 'Thib', 
-                    password: 'Equipe14'
-                }, 
-                */
-                success: function(response) {
+                headers: {
+                    'accept': '*/*'
+                },
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
                     console.log('Connexion réussie:', response);
                     showStatusMessage('Connexion établie avec succès.', 'success');
+                    token = response.token; // Assurez-vous que la réponse contient le token
+                    // Stocker le token dans sessionStorage ou localStorage si nécessaire
+                    sessionStorage.setItem('token', token); // Exemple avec sessionStorage
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown) {
                     console.error('Erreur de connexion:', textStatus, errorThrown);
                     showStatusMessage('Erreur lors de la connexion à l\'API.', 'error');
                 }
             });
         });
 
-        // Fonction pour charger les équipes depuis l'API
-        function loadTeams() {
-            $.ajax({
-                url: 'https://localhost:7162/Equipe',
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    $('#teams-container').empty(); // Vider le conteneur d'équipes avant d'ajouter de nouvelles équipes
-
-                    $.each(data, function(index, equipe) {
-                        var equipeHTML = '<div class="team">';
-                        equipeHTML += '<h2>' + equipe.name + '</h2>';
-                        equipeHTML += '<p>Ville: ' + equipe.ville + '</p>';
-                        if (equipe.joueurs && equipe.joueurs.length > 0) {
-                            equipeHTML += '<p>Joueurs:</p>';
-                            equipeHTML += '<ul>';
-                            $.each(equipe.joueurs, function(idx, joueur) {
-                                equipeHTML += '<li>' + joueur.nom + ' - ' + joueur.position + '</li>';
-                            });
-                            equipeHTML += '</ul>';
-                        }
-                        equipeHTML += '</div>';
-
-                        $('#teams-container').append(equipeHTML);
-                    });
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Erreur de chargement des équipes: ' + textStatus, errorThrown);
-                }
-            });
-        }
-
         // Fonction pour afficher le message de statut
         function showStatusMessage(message, type) {
             $('#status-message').removeClass().addClass(type).text(message);
         }
 
-        // Fonction pour ajouter une nouvelle équipe
-        $('#add-team-form').submit(function(event) {
-            event.preventDefault();
 
-            var teamName = $('#team-name').val();
-            var teamCity = $('#team-city').val();
-
-            var newTeam = {
-                name: teamName,
-                ville: teamCity
-            };
-
-            $.ajax({
-                url: 'https://localhost:7162/Equipe',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(newTeam),
-                success: function(response) {
-                    console.log('Équipe ajoutée avec succès:', response);
-                    loadTeams(); // Recharger les équipes après l'ajout
-                    $('#team-name').val('');
-                    $('#team-city').val('');
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Erreur lors de l\'ajout de l\'équipe:', textStatus, errorThrown);
-                }
-            });
-        });
-
-        // Charger les équipes lors du chargement initial de la page
-        $(document).ready(function() {
-            loadTeams();
+        // Action du bouton "Aller sur la page HTTP"
+        $('#go-to-http-page').click(function () {
+            // Redirection vers une autre page où seront gérées les autres requêtes HTTP
+            window.location.href = 'requete_http.html';
         });
     </script>
 </body>
+
 </html>
-
-
