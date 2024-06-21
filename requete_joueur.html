@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Requêtes HTTP</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet"> <!-- Référence au fichier CSS externe -->
 </head>
 
@@ -14,16 +15,18 @@
         <h1>Bienvenue dans la partie modification des Joueurs du Top 14</h1>
     </div>
 
+    <!-- Pour afficher une équipe avec ses joueurs -->
     <h2 class="mt-4">Afficher une équipe</h2>
     <div>
         <label for="teamIdEquipe">ID de l'équipe:</label>
         <input type="text" id="teamIdEquipe" name="teamIdEquipe">
     </div>
-    <button id="searchTeamButton">Rechercher</button>
+    <button id="searchTeamButton" class="btn btn-primary">Rechercher</button>
     <div id="teams-container">
         <!-- Afficher une équipe avec ses joueurs -->
     </div>
 
+    <!-- Pour afficher un joueur en particulier -->
     <h2 class="mt-4">Afficher un joueur</h2>
     <div>
         <label for="teamIdJoueur">ID de l'équipe:</label>
@@ -33,12 +36,82 @@
         <label for="playerId">ID du joueur:</label>
         <input type="text" id="playerId" name="playerId">
     </div>
-    <button id="searchPlayerButton">Rechercher</button>
+    <button id="searchPlayerButton" class="btn btn-primary">Rechercher</button>
 
-    <div id="teams-container" class="mt-4"></div>
+    <div id="teams-container2" class="mt-4"></div>
 
-    <button id="go-to-index-page" class="mt-4">Retourner à la page d'accueil</button>
+    <!-- Pour ajouter un joueur -->
+    <h2 class="mt-4">Ajouter un joueur</h2>
+    <div>
+        <label for="teamIdAjout">ID de l'équipe:</label>
+        <input type="text" id="teamIdAjout" name="teamIdAjout">
+    </div>
+    <div>
+        <label for="nomJoueur">Nom du joueur:</label>
+        <input type="text" id="nomJoueur" name="nomJoueur">
+    </div>
+    <div>
+        <label for="positionJoueur">Position du joueur:</label>
+        <input type="text" id="positionJoueur" name="positionJoueur">
+    </div>
+    <div>
+        <label for="numeroJoueur">Numéro du joueur:</label>
+        <input type="number" id="numeroJoueur" name="numeroJoueur">
+    </div>
+    <button id="addPlayerButton" class="btn btn-success">Ajouter Joueur</button>
 
+    <!-- Pour modifier un joueur -->
+    <h2 class="mt-4">Modifier un joueur</h2>
+    <form id="update-player-form" class="mb-4">
+        <div class="form-row">
+            <div class="col">
+                <input type="number" id="update-team-id" class="form-control" placeholder="ID de l'équipe" required>
+            </div>
+            <div class="col">
+                <input type="number" id="update-player-id" class="form-control" placeholder="ID du joueur" required>
+            </div>
+            <div class="col">
+                <button type="button" id="load-player-button" class="btn btn-info">Charger le joueur</button>
+            </div>
+        </div>
+        <div id="update-player-fields" style="display:none;">
+            <div class="form-row mt-3">
+                <div class="col">
+                    <input type="text" id="update-player-name" class="form-control" placeholder="Nom du joueur"
+                        required>
+                </div>
+                <div class="col">
+                    <input type="text" id="update-player-position" class="form-control" placeholder="Position du joueur"
+                        required>
+                </div>
+                <div class="col">
+                    <input type="number" id="update-player-number" class="form-control" placeholder="Numéro du joueur"
+                        required>
+                </div>
+                <button type="submit" class="btn btn-warning">Mettre à jour</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Pour supprimer un joueur -->
+    <h2 class="mt-4">Supprimer un joueur</h2>
+    <div>
+        <label for="teamIdDelete">ID de l'équipe:</label>
+        <input type="text" id="teamIdDelete" name="teamIdDelete">
+    </div>
+    <div>
+        <label for="playerIdDelete">ID du joueur:</label>
+        <input type="text" id="playerIdDelete" name="playerIdDelete">
+    </div>
+    <button id="deletePlayerButton" class="btn btn-danger">Supprimer Joueur</button>
+
+    <div class="mt-4">
+    <!-- Pour retourner à l'accueil -->
+    <button id="go-to-index-page" class="btn btn-secondary mt-4">Retourner à la page d'accueil</button>
+    <!-- Pour aller à la page des équipes -->
+    <button id="go-to-requete-equipe-page" class="btn btn-primary">Aller sur la page des équipes</button>
+    </div>
+    
     <script>
         var token = sessionStorage.getItem('token'); // Récupération du token
 
@@ -68,7 +141,7 @@
                             equipeHTML += '<h3>Équipe ID : ' + equipeResponse.id + '</h3>';
                             equipeHTML += '<h4>Nom de l\'équipe : ' + equipeResponse.name + '</h4>';
                             equipeHTML += '</div>';
-                            
+
                             // Affichage des joueurs de l'équipe
                             if (equipeResponse.joueurs && equipeResponse.joueurs.length > 0) {
                                 equipeHTML += '<ul>';
@@ -109,7 +182,7 @@
                         console.log("Requête AJAX GET joueur réussie", joueurResponse);
 
                         // Vider le conteneur d'équipes
-                        $('#teams-container').empty();
+                        $('#teams-container2').empty();
 
                         // Affichage des informations du joueur
                         var joueurHTML = '<div class="joueur">';
@@ -119,7 +192,7 @@
                         joueurHTML += '<p>Numéro : ' + joueurResponse.numero + '</p>';
                         joueurHTML += '</div>';
 
-                        $('#teams-container').append(joueurHTML);
+                        $('#teams-container2').append(joueurHTML);
                     },
                     error: function (xhr, status, error) {
                         console.error('Erreur lors de la requête AJAX GET joueur:', error);
@@ -127,10 +200,151 @@
                 });
             });
 
+            // Action du bouton "Ajouter joueur"
+            $('#addPlayerButton').click(function () {
+                var teamId = $('#teamIdAjout').val();
+                var nomJoueur = $('#nomJoueur').val();
+                var positionJoueur = $('#positionJoueur').val();
+                var numeroJoueur = $('#numeroJoueur').val();
+
+                // Données du joueur à ajouter
+                var dataToAdd = {
+                    nom: nomJoueur,
+                    position: positionJoueur,
+                    numero: numeroJoueur
+                };
+
+                // Requête AJAX POST pour ajouter le joueur à l'équipe spécifiée
+                $.ajax({
+                    url: "https://localhost:7162/Equipe/" + teamId + "/joueurs",
+                    type: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify(dataToAdd),
+                    success: function (response) {
+                        console.log("Requête AJAX POST joueur réussie :", response);
+                        alert("Joueur ajouté avec succès à l'équipe !");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Erreur lors de la requête AJAX POST joueur:', error);
+                        alert("Erreur lors de l'ajout du joueur : " + error);
+                    }
+                });
+            });
+
+            // Fonction pour charger les détails d'un joueur pour modification
+            $('#load-player-button').click(function () {
+                var teamId = $('#update-team-id').val();
+                var playerId = $('#update-player-id').val();
+                var token = sessionStorage.getItem('token'); // Récupération du token
+
+                $.ajax({
+                    url: 'https://localhost:7162/Equipe/' + teamId + '/joueurs/' + playerId,
+                    type: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function (data) {
+                        $('#update-player-name').val(data.nom);
+                        $('#update-player-position').val(data.position);
+                        $('#update-player-number').val(data.numero);
+                        $('#update-player-fields').show();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Erreur lors du chargement du joueur:', textStatus, errorThrown);
+                    }
+                });
+            });
+
+            // Fonction pour mettre à jour un joueur
+            $('#update-player-form').submit(function (event) {
+                event.preventDefault();
+
+                var teamId = $('#update-team-id').val();
+                var playerId = $('#update-player-id').val();
+                var updatedPlayer = {
+                    id: parseInt(playerId),
+                    nom: $('#update-player-name').val(),
+                    position: $('#update-player-position').val(),
+                    numero: parseInt($('#update-player-number').val())
+                };
+                var token = sessionStorage.getItem('token'); // Récupération du token
+
+                $.ajax({
+                    url: 'https://localhost:7162/Equipe/' + teamId + '/joueurs/' + playerId,
+                    type: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify(updatedPlayer),
+                    success: function (data) {
+                        console.log('Joueur mis à jour avec succès:', data);
+                        $('#update-team-id').val('');
+                        $('#update-player-id').val('');
+                        $('#update-player-name').val('');
+                        $('#update-player-position').val('');
+                        $('#update-player-number').val('');
+                        $('#update-player-fields').hide();
+                        $('#status-message').text('Joueur mis à jour avec succès').addClass('text-success').fadeIn();
+                        setTimeout(function () {
+                            $('#status-message').fadeOut().removeClass('text-success').text('');
+                        }, 3000);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Erreur lors de la mise à jour du joueur:', textStatus, errorThrown);
+                        $('#status-message').text('Erreur lors de la mise à jour du joueur').addClass('text-danger').fadeIn();
+                        setTimeout(function () {
+                            $('#status-message').fadeOut().removeClass('text-danger').text('');
+                        }, 3000);
+                    }
+                });
+            });
+
+            // Action du bouton "Supprimer joueur"
+            $('#deletePlayerButton').click(function () {
+                var teamId = $('#teamIdDelete').val();
+                var playerId = $('#playerIdDelete').val();
+
+                // Afficher une boîte de dialogue de confirmation
+                if (confirm("Êtes-vous sûr de vouloir supprimer ce joueur ?")) {
+                    // Requête AJAX DELETE pour supprimer le joueur spécifique
+                    $.ajax({
+                        url: "https://localhost:7162/Equipe/" + teamId + "/joueurs/" + playerId,
+                        type: "DELETE",
+                        headers: {
+                            "Authorization": "Bearer " + token,
+                            "accept": "*/*"
+                        },
+                        success: function (response) {
+                            console.log("Suppression du joueur réussie :", response);
+                            alert("Joueur supprimé avec succès !");
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Erreur lors de la suppression du joueur:', error);
+                            alert("Erreur lors de la suppression du joueur : " + error);
+                        }
+                    });
+                } else {
+                    // Si l'utilisateur annule la suppression
+                    console.log("Suppression annulée par l'utilisateur");
+                }
+            });
+
             // Action du bouton "Retour à la page d'accueil"
             $('#go-to-index-page').click(function () {
                 // Redirection vers une autre page où seront gérées les autres requêtes HTTP
                 window.location.href = 'index.html';
+            });
+
+            // Action du bouton "Retour à la page d'accueil"
+            $('#go-to-requete-equipe-page').click(function () {
+                // Redirection vers une autre page où seront gérées les autres requêtes HTTP
+                window.location.href = 'requete_equipe.html';
             });
         });
     </script>

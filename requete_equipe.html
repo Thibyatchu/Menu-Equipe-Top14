@@ -18,6 +18,7 @@
         <h1>Bienvenue dans la partie modification des Équipes du Top 14</h1>
     </div>
 
+    <!-- Pour ajouter une équipe -->
     <h2 class="mt-4">Ajouter une équipe</h2>
     <form id="add-team-form" class="mb-4">
         <div class="form-row">
@@ -31,6 +32,7 @@
         </div>
     </form>
 
+    <!-- Pour modifier une équipe -->
     <h2>Modifier une équipe</h2>
     <form id="update-team-form" class="mb-4">
         <div class="form-row">
@@ -44,26 +46,32 @@
         <div id="update-team-fields" style="display:none;">
             <div class="form-row mt-3">
                 <div class="col">
-                    <input type="text" id="update-team-name" class="form-control" placeholder="Nom de l'équipe" required>
+                    <input type="text" id="update-team-name" class="form-control" placeholder="Nom de l'équipe"
+                        required>
                 </div>
                 <div class="col">
-                    <input type="text" id="update-team-city" class="form-control" placeholder="Ville de l'équipe" required>
+                    <input type="text" id="update-team-city" class="form-control" placeholder="Ville de l'équipe"
+                        required>
                 </div>
                 <button type="submit" class="btn btn-warning">Mettre à jour</button>
             </div>
         </div>
     </form>
 
+    <!-- Pour supprimer une équipe -->
     <h2>Supprimer une équipe</h2>
     <form id="delete-team-form">
         <div class="form-row">
             <div class="col">
-                <input type="number" id="delete-team-id" class="form-control" placeholder="ID de l'équipe à supprimer" required>
+                <input type="number" id="delete-team-id" class="form-control" placeholder="ID de l'équipe à supprimer"
+                    required>
             </div>
             <button type="button" id="confirm-delete-button" class="btn btn-danger">Supprimer</button>
         </div>
     </form>
 
+
+    <!-- Affichage de toutes les équipes -->
     <h2 class="mt-4">Équipes du Top 14</h2>
     <form id="load-team-form">
         <div id="teams-container">
@@ -71,7 +79,12 @@
         </div>
     </form>
 
-    <button id="go-to-index-page" class="btn btn-secondary mt-4">Retourner à la page d'accueil</button>
+    <div class="mt-4">
+        <!-- Pour retourner à l'accueil -->
+        <button id="go-to-index-page" class="btn btn-secondary mt-4">Retourner à la page d'accueil</button>
+        <!-- Pour aller à la page des joueurs -->
+        <button id="go-to-requete-joueur-page" class="btn btn-primary">Aller sur la page des joueurs</button>
+    </div>
 
     <div id="status-message" class="mt-4"></div>
 
@@ -176,27 +189,34 @@
 
         // Fonction pour supprimer une équipe
         $('#confirm-delete-button').click(function () {
-            console.log("fonction delete team");
             var teamId = $('#delete-team-id').val();
             var token = sessionStorage.getItem('token'); // Récupération du token
 
-            $.ajax({
-                url: 'https://localhost:7162/Equipe/' + teamId,
-                type: 'DELETE',
-                headers: {
-                    'Accept': '*/*',
-                    'Authorization': 'Bearer ' + token
-                },
-                success: function (response) {
-                    console.log('Équipe supprimée avec succès:', response);
-                    loadTeams(); // Recharger les équipes après la suppression
-                    $('#delete-team-id').val('');
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Erreur lors de la suppression de l\'équipe:', textStatus, errorThrown);
-                }
-            });
+            // Afficher une boîte de dialogue de confirmation
+            if (confirm("Êtes-vous sûr de vouloir supprimer cette équipe ?")) {
+                // Requête AJAX DELETE pour supprimer l'équipe spécifiée
+                $.ajax({
+                    url: 'https://localhost:7162/Equipe/' + teamId,
+                    type: 'DELETE',
+                    headers: {
+                        'Accept': '*/*',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function (response) {
+                        console.log('Équipe supprimée avec succès:', response);
+                        loadTeams(); // Recharger les équipes après la suppression
+                        $('#delete-team-id').val('');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Erreur lors de la suppression de l\'équipe:', textStatus, errorThrown);
+                    }
+                });
+            } else {
+                // Si l'utilisateur annule la suppression
+                console.log("Suppression annulée par l'utilisateur");
+            }
         });
+
 
         // Fonction pour charger et afficher les équipes
         function loadTeams() {
@@ -232,6 +252,10 @@
             loadTeams();
         });
 
+        // Action du bouton "Retour à la page d'accueil"
+        $('#go-to-requete-joueur-page').click(function () {
+            window.location.href = 'requete_joueur.html';
+        });
         // Action du bouton "Retour à la page d'accueil"
         $('#go-to-index-page').click(function () {
             window.location.href = 'index.html';
