@@ -75,6 +75,15 @@ body.page2 {
     padding: 2rem;
 }
 
+.cover-container {
+    max-width: 60em;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 .text-center {
     text-align: center;
 }
@@ -165,4 +174,3 @@ button#go-to-index-page {
 button#go-to-index-page:hover {
     background-color: #5a6268;
 }
-
