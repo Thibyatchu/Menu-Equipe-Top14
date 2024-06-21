@@ -1,26 +1,168 @@
-.team {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    padding: 15px;
-    margin-bottom: 15px;
-}
-
+/* Page 1 Styles */
 body {
     background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
 }
 
 .cover-container {
-    max-width: 42em;
+    max-width: 60em;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .inner {
-    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.cover-heading {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #333;
 }
 
 .lead {
+    font-size: 1.25rem;
     margin-bottom: 1rem;
+}
+
+.lead ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.lead ul li {
+    background: #e9ecef;
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+    border-radius: 4px;
+}
+
+.mt-4 {
+    margin-top: 2rem !important;
+}
+
+#check-connection, #go-to-http-page, #go-to-2http-page {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.5rem;
 }
 
 #status-message {
     margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 4px;
 }
+
+.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Page 2 Styles */
+body.page2 {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    padding: 2rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-4 {
+    margin-bottom: 2rem !important;
+}
+
+.mt-4 {
+    margin-top: 2rem !important;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+h2 {
+    font-size: 1.75rem;
+    margin-top: 1.5rem;
+    color: #333;
+}
+
+div {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#teams-container {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.joueur, .equipe {
+    background-color: #e9ecef;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.joueur h3, .equipe h3 {
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.joueur h4, .equipe h4 {
+    font-size: 1rem;
+    color: #666;
+}
+
+button#go-to-index-page {
+    background-color: #6c757d;
+}
+
+button#go-to-index-page:hover {
+    background-color: #5a6268;
+}
+

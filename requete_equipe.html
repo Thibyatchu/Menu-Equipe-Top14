@@ -12,9 +12,10 @@
 </head>
 
 <body class="container py-4">
-    <button id="load-teams-button" class="btn btn-primary mb-3">Charger les équipes</button>
-    <div id="teams-container">
-        <!-- Ici seront affichées les équipes existantes -->
+
+    <!-- Message de bienvenue centré -->
+    <div class="text-center mb-4">
+        <h1>Bienvenue dans la partie modification des Équipes du Top 14</h1>
     </div>
 
     <h2 class="mt-4">Ajouter une équipe</h2>
@@ -63,64 +64,26 @@
         </div>
     </form>
 
+    <h2 class="mt-4">Équipes du Top 14</h2>
+    <form id="load-team-form">
+        <div id="teams-container">
+            <!-- Ici seront affichées les équipes existantes -->
+        </div>
+    </form>
+
     <button id="go-to-index-page" class="btn btn-secondary mt-4">Retourner à la page d'accueil</button>
 
     <div id="status-message" class="mt-4"></div>
 
-    <script>          
-        // Fonction pour charger les équipes depuis l'API
-        function loadTeams() {
-            var token = sessionStorage.getItem('token');
-
-            $.ajax({
-                url: 'https://localhost:7162/Equipe',
-                type: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                success: function (data) {
-                    $('#teams-container').empty(); // Vider le conteneur d'équipes avant d'ajouter de nouvelles équipes
-
-                    $.each(data, function (index, equipe) {
-                        var equipeHTML = '<div class="team">';
-                        equipeHTML += '<h3>' + equipe.id + '. ' + equipe.name + '</h3>';
-                        equipeHTML += '<h4>Ville : ' + equipe.ville + '</h4>';
-                        if (equipe.joueurs && equipe.joueurs.length > 0) {
-                            equipeHTML += '<h5>Joueurs :</h5>';
-                            equipeHTML += '<ul>';
-                            $.each(equipe.joueurs, function (idx, joueur) {
-                                equipeHTML += '<li>' + joueur.nom + ' - ' + joueur.position + ' - ' + joueur.numero + '</li>';
-                            });
-                            equipeHTML += '</ul>';
-                        }
-                        equipeHTML += '</div>';
-
-                        $('#teams-container').append(equipeHTML);
-                    });
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Erreur de chargement des équipes: ' + textStatus, errorThrown);
-                }
-            });
-        }
-
-        // Fonction pour afficher le message de statut
-        function showStatusMessage(message, type) {
-            $('#status-message').removeClass().addClass(type).text(message);
-        }
-
-        // Action du bouton "Charger les équipes"
-        $('#load-teams-button').click(function () {
-            loadTeams();
-        });
-
+    <script>
         // Fonction pour ajouter une nouvelle équipe
         $('#add-team-form').submit(function (event) {
+            console.log("fonction add team");
             event.preventDefault();
 
             var teamName = $('#team-name').val();
             var teamCity = $('#team-city').val();
+            var token = sessionStorage.getItem('token'); // Récupération du token
 
             var newTeam = {
                 id: 0, // Ajout de l'id pour correspondre à la structure attendue par l'API
@@ -152,7 +115,9 @@
 
         // Fonction pour charger les détails d'une équipe pour modification
         $('#load-team-button').click(function () {
+            console.log("fonction load team");
             var teamId = $('#update-team-id').val();
+            var token = sessionStorage.getItem('token'); // Récupération du token
 
             $.ajax({
                 url: 'https://localhost:7162/Equipe/' + teamId,
@@ -168,41 +133,35 @@
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error('Erreur lors du chargement de l\'équipe:', textStatus, errorThrown);
-                    showStatusMessage('Erreur lors du chargement de l\'équipe.', 'error');
                 }
             });
         });
 
-        // Fonction pour mettre à jour une équipe existante
+        // Fonction pour mettre à jour une équipe
         $('#update-team-form').submit(function (event) {
+            console.log("fonction update team");
             event.preventDefault();
 
             var teamId = $('#update-team-id').val();
             var updatedTeam = {
-                id: teamId,
+                id: parseInt(teamId),
                 name: $('#update-team-name').val(),
                 ville: $('#update-team-city').val(),
-                joueurs: [
-                    {
-                        id: 0,
-                        nom: "string",
-                        position: "string",
-                        numero: 0
-                    }
-                ]
+                joueurs: [] // Vous pouvez ajouter les joueurs ici si nécessaire
             };
+            var token = sessionStorage.getItem('token'); // Récupération du token
 
             $.ajax({
                 url: 'https://localhost:7162/Equipe/' + teamId,
                 type: 'PUT',
                 headers: {
-                    "accept": "*/*",
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json"
+                    'Accept': '*/*',
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
                 },
                 data: JSON.stringify(updatedTeam),
-                success: function (response) {
-                    console.log('Équipe mise à jour avec succès:', response);
+                success: function (data) {
+                    console.log('Équipe mise à jour avec succès:', data);
                     loadTeams(); // Recharger les équipes après la mise à jour
                     $('#update-team-id').val('');
                     $('#update-team-name').val('');
@@ -215,43 +174,66 @@
             });
         });
 
-        // Fonction pour supprimer une équipe existante
-        function deleteTeam(teamId) {
+        // Fonction pour supprimer une équipe
+        $('#confirm-delete-button').click(function () {
+            console.log("fonction delete team");
+            var teamId = $('#delete-team-id').val();
+            var token = sessionStorage.getItem('token'); // Récupération du token
+
             $.ajax({
                 url: 'https://localhost:7162/Equipe/' + teamId,
                 type: 'DELETE',
                 headers: {
-                    "accept": "*/*",
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json"
+                    'Accept': '*/*',
+                    'Authorization': 'Bearer ' + token
                 },
                 success: function (response) {
                     console.log('Équipe supprimée avec succès:', response);
                     loadTeams(); // Recharger les équipes après la suppression
+                    $('#delete-team-id').val('');
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error('Erreur lors de la suppression de l\'équipe:', textStatus, errorThrown);
                 }
             });
-        }
-
-        // Action du bouton "Supprimer"
-        $('#confirm-delete-button').click(function () {
-            var teamIdToDelete = $('#delete-team-id').val();
-
-            // Demander confirmation avant de supprimer
-            var confirmation = confirm("Êtes-vous sûr de vouloir supprimer l'équipe avec l'ID " + teamIdToDelete + " ?");
-            if (confirmation) {
-                deleteTeam(teamIdToDelete);
-            } else {
-                console.log("Suppression annulée.");
-                // Vous pouvez ajouter un message ici ou gérer l'annulation de la suppression
-            }
         });
 
-        // Action du bouton "Aller sur la page HTTP"
+        // Fonction pour charger et afficher les équipes
+        function loadTeams() {
+            var token = sessionStorage.getItem('token'); // Récupération du token
+
+            $.ajax({
+                url: 'https://localhost:7162/Equipe',
+                type: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function (data) {
+                    console.log('Équipes récupérées:', data);
+                    $('#teams-container').empty(); // Vider le conteneur avant d'ajouter les nouvelles équipes
+
+                    data.forEach(function (team) {
+                        var teamHtml = '<div class="team">';
+                        teamHtml += '<h3>' + team.name + '</h3>';
+                        teamHtml += '<p>Ville: ' + team.ville + '</p>';
+                        teamHtml += '</div>';
+                        $('#teams-container').append(teamHtml);
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Erreur lors de la récupération des équipes:', textStatus, errorThrown);
+                }
+            });
+        }
+
+        // Charger les équipes au chargement de la page
+        $(document).ready(function () {
+            loadTeams();
+        });
+
+        // Action du bouton "Retour à la page d'accueil"
         $('#go-to-index-page').click(function () {
-            // Redirection vers une autre page où seront gérées les autres requêtes HTTP
             window.location.href = 'index.html';
         });
     </script>

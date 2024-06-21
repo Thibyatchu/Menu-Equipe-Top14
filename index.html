@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <title>Équipes Top 14 - Accueil</title>
@@ -8,10 +7,9 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet"> <!-- Référence au fichier CSS externe -->
 </head>
-
-<body class="text-center d-flex align-items-center cover-container">
-    <div class="cover-container mx-auto">
-        <main role="main" class="inner cover">
+<body>
+    <div class="cover-container">
+        <main role="main" class="inner">
             <h1 class="cover-heading">Bienvenue dans l'application Équipes Top 14</h1>
             <p class="lead">Grâce à cette application vous pourrez :</p>
             <ul class="lead text-left">
@@ -22,13 +20,13 @@
                 <li>Effectuer les mêmes actions pour les joueurs !</li>
             </ul>
             <div class="mt-4">
-                <button id="check-connection" class="btn btn-lg btn-secondary mr-2">Vérifier la connexion</button>
-                <button id="go-to-http-page" class="btn btn-lg btn-primary">Aller sur la page des requêtes</button>
+                <button id="check-connection" class="btn btn-secondary">Vérifier la connexion</button>
+                <button id="go-to-http-page" class="btn btn-primary">Aller sur la page des équipes</button>
+                <button id="go-to-2http-page" class="btn btn-primary">Aller sur la page des joueurs</button>
             </div>
             <div id="status-message" class="mt-3"></div>
         </main>
     </div>
-
 
     <script>
         var token = ''; // Variable globale pour stocker le token
@@ -67,13 +65,17 @@
             $('#status-message').removeClass().addClass(type).text(message);
         }
 
-
         // Action du bouton "Aller sur la page HTTP"
         $('#go-to-http-page').click(function () {
             // Redirection vers une autre page où seront gérées les autres requêtes HTTP
-            window.location.href = 'requete_http.html';
+            window.location.href = 'requete_equipe.html';
+        });
+
+        // Action du bouton "Aller sur la page HTTP"
+        $('#go-to-2http-page').click(function () {
+            // Redirection vers une autre page où seront gérées les autres requêtes HTTP
+            window.location.href = 'requete_joueur.html';
         });
     </script>
 </body>
-
 </html>

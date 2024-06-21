@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Requêtes HTTP</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="styles.css" rel="stylesheet"> <!-- Référence au fichier CSS externe -->
+</head>
+
+<body class="page2">
+
+    <div class="text-center mb-4">
+        <h1>Bienvenue dans la partie modification des Joueurs du Top 14</h1>
+    </div>
+
+    <h2 class="mt-4">Afficher une équipe</h2>
+    <div>
+        <label for="teamIdEquipe">ID de l'équipe:</label>
+        <input type="text" id="teamIdEquipe" name="teamIdEquipe">
+    </div>
+    <button id="searchTeamButton">Rechercher</button>
+    <div id="teams-container">
+        <!-- Afficher une équipe avec ses joueurs -->
+    </div>
+
+    <h2 class="mt-4">Afficher un joueur</h2>
+    <div>
+        <label for="teamIdJoueur">ID de l'équipe:</label>
+        <input type="text" id="teamIdJoueur" name="teamIdJoueur">
+    </div>
+    <div>
+        <label for="playerId">ID du joueur:</label>
+        <input type="text" id="playerId" name="playerId">
+    </div>
+    <button id="searchPlayerButton">Rechercher</button>
+
+    <div id="teams-container" class="mt-4"></div>
+
+    <button id="go-to-index-page" class="mt-4">Retourner à la page d'accueil</button>
+
+    <script>
+        var token = sessionStorage.getItem('token'); // Récupération du token
+
+        $(document).ready(function () {
+            // Action du bouton "Rechercher équipe"
+            $('#searchTeamButton').click(function () {
+                var teamId = $('#teamIdEquipe').val();
+
+                // Requête AJAX pour récupérer l'équipe par son ID
+                $.ajax({
+                    url: "https://localhost:7162/Equipe/" + teamId,
+                    type: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "accept": "application/json"
+                    },
+                    success: function (equipeResponse) {
+                        console.log("Équipe récupérée :", equipeResponse);
+
+                        // Vider le conteneur d'équipes
+                        $('#teams-container').empty();
+
+                        // Vérifier si l'équipeResponse contient le nom de l'équipe
+                        if (equipeResponse.name) {
+                            // Affichage des informations de l'équipe
+                            var equipeHTML = '<div class="equipe">';
+                            equipeHTML += '<h3>Équipe ID : ' + equipeResponse.id + '</h3>';
+                            equipeHTML += '<h4>Nom de l\'équipe : ' + equipeResponse.name + '</h4>';
+                            equipeHTML += '</div>';
+                            
+                            // Affichage des joueurs de l'équipe
+                            if (equipeResponse.joueurs && equipeResponse.joueurs.length > 0) {
+                                equipeHTML += '<ul>';
+                                equipeResponse.joueurs.forEach(function (joueur) {
+                                    equipeHTML += '<li>' + joueur.nom + ' (' + joueur.position + ' - Numéro ' + joueur.numero + ')</li>';
+                                });
+                                equipeHTML += '</ul>';
+                            } else {
+                                equipeHTML += '<p>Aucun joueur trouvé pour cette équipe.</p>';
+                            }
+                            $('#teams-container').append(equipeHTML);
+                        } else {
+                            // Affichage d'un message si le nom de l'équipe n'est pas disponible
+                            var errorMessage = '<p>Aucun nom d\'équipe trouvé pour l\'ID spécifié.</p>';
+                            $('#teams-container').append(errorMessage);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Erreur lors de la requête AJAX pour récupérer l\'équipe:', error);
+                    }
+                });
+            });
+
+            // Action du bouton "Rechercher joueur"
+            $('#searchPlayerButton').click(function () {
+                var teamId = $('#teamIdJoueur').val();
+                var playerId = $('#playerId').val();
+
+                // Requête AJAX pour récupérer le joueur spécifique par son ID
+                $.ajax({
+                    url: "https://localhost:7162/Equipe/" + teamId + "/joueurs/" + playerId,
+                    type: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "accept": "application/json"
+                    },
+                    success: function (joueurResponse) {
+                        console.log("Requête AJAX GET joueur réussie", joueurResponse);
+
+                        // Vider le conteneur d'équipes
+                        $('#teams-container').empty();
+
+                        // Affichage des informations du joueur
+                        var joueurHTML = '<div class="joueur">';
+                        joueurHTML += '<h3>Joueur ID : ' + joueurResponse.id + '</h3>';
+                        joueurHTML += '<h4>Nom du joueur : ' + joueurResponse.nom + '</h4>';
+                        joueurHTML += '<p>Position : ' + joueurResponse.position + '</p>';
+                        joueurHTML += '<p>Numéro : ' + joueurResponse.numero + '</p>';
+                        joueurHTML += '</div>';
+
+                        $('#teams-container').append(joueurHTML);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Erreur lors de la requête AJAX GET joueur:', error);
+                    }
+                });
+            });
+
+            // Action du bouton "Retour à la page d'accueil"
+            $('#go-to-index-page').click(function () {
+                // Redirection vers une autre page où seront gérées les autres requêtes HTTP
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+
+</html>
