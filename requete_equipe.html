@@ -13,6 +13,29 @@
 
 <body class="container py-4">
 
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Équipes Top 14</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Pages
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="index.html">Menu</a>
+                        <a class="dropdown-item" href="admin.html">Connexion</a>
+                        <a class="dropdown-item" href="requete_joueur.html">Joueur</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
     <!-- Message de bienvenue centré -->
     <div class="text-center mb-4">
         <h1>Bienvenue dans la partie modification des Équipes du Top 14</h1>
@@ -79,15 +102,10 @@
         </div>
     </form>
 
-    <div class="mt-4">
-        <!-- Pour retourner à l'accueil -->
-        <button id="go-to-index-page" class="btn btn-secondary mt-4">Retourner à la page d'accueil</button>
-        <!-- Pour aller à la page des joueurs -->
-        <button id="go-to-requete-joueur-page" class="btn btn-primary">Aller sur la page des joueurs</button>
-    </div>
-
     <div id="status-message" class="mt-4"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         // Fonction pour ajouter une nouvelle équipe
         $('#add-team-form').submit(function (event) {
@@ -250,15 +268,6 @@
         // Charger les équipes au chargement de la page
         $(document).ready(function () {
             loadTeams();
-        });
-
-        // Action du bouton "Retour à la page d'accueil"
-        $('#go-to-requete-joueur-page').click(function () {
-            window.location.href = 'requete_joueur.html';
-        });
-        // Action du bouton "Retour à la page d'accueil"
-        $('#go-to-index-page').click(function () {
-            window.location.href = 'index.html';
         });
     </script>
 </body>
