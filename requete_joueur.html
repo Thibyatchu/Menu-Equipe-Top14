@@ -3,16 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Requêtes HTTP</title>
+    <title>Gestion des Joueurs</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet"> <!-- Référence au fichier CSS externe -->
+    <link href="styles.css" rel="stylesheet">
 </head>
 
 <body class="container py-4">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Équipes Top 14</a>
+        <a class="navbar-brand" href="#">Joueurs Top 14</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -25,9 +25,8 @@
                         Pages
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="index.html">Menu</a>
-                        <a class="dropdown-item" href="admin.html">Connexion</a>
-                        <a class="dropdown-item" href="requete_equipe.html">Equipe</a>
+                        <a class="dropdown-item" href="menu.html">Menu</a>
+                        <a class="dropdown-item" href="requete_equipe.html">Équipes</a>
                     </div>
                 </li>
             </ul>
@@ -35,323 +34,308 @@
     </nav>
 
     <div class="text-center mb-4">
-        <h1>Bienvenue dans la partie modification des Joueurs du Top 14</h1>
+        <h1>Gestion des Joueurs du Top 14</h1>
     </div>
 
-    <!-- Pour afficher une équipe avec ses joueurs -->
-    <h2 class="mt-4">Afficher une équipe</h2>
-    <div>
-        <label for="teamIdEquipe">ID de l'équipe:</label>
-        <input type="text" id="teamIdEquipe" name="teamIdEquipe">
-    </div>
-    <button id="searchTeamButton" class="btn btn-primary">Rechercher</button>
-    <div id="teams-container">
-        <!-- Afficher une équipe avec ses joueurs -->
+    <!-- Bouton pour afficher le tableau des postes et numéros -->
+    <div class="text-center mb-4">
+        <button id="showPositionsBtn" class="btn btn-info">Afficher les Postes et Numéros</button>
     </div>
 
-    <!-- Pour afficher un joueur en particulier -->
-    <h2 class="mt-4">Afficher un joueur</h2>
-    <div>
-        <label for="teamIdJoueur">ID de l'équipe:</label>
-        <input type="text" id="teamIdJoueur" name="teamIdJoueur">
+    <!-- Tableau des postes et numéros -->
+    <div id="positionsTable" class="mt-4" style="display: none;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Poste</th>
+                    <th>Numéros</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Pilier</td>
+                    <td>1, 3</td>
+                </tr>
+                <tr>
+                    <td>Talonneur</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>Deuxième ligne</td>
+                    <td>4, 5</td>
+                </tr>
+                <tr>
+                    <td>Troisième ligne</td>
+                    <td>6, 7, 8</td>
+                </tr>
+                <tr>
+                    <td>Demi de mêlée</td>
+                    <td>9</td>
+                </tr>
+                <tr>
+                    <td>Demi d'ouverture</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Centre</td>
+                    <td>12, 13</td>
+                </tr>
+                <tr>
+                    <td>Ailier</td>
+                    <td>11, 14</td>
+                </tr>
+                <tr>
+                    <td>Arrière</td>
+                    <td>15</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <div>
-        <label for="playerId">ID du joueur:</label>
-        <input type="text" id="playerId" name="playerId">
-    </div>
-    <button id="searchPlayerButton" class="btn btn-primary">Rechercher</button>
 
-    <div id="teams-container2" class="mt-4"></div>
+    <!-- Pour afficher les équipes avec leurs joueurs -->
+    <div id="teams-container" class="mt-4">
+        <!-- Les équipes avec leurs joueurs seront chargées ici -->
+    </div>
 
-    <!-- Pour ajouter un joueur -->
-    <h2 class="mt-4">Ajouter un joueur</h2>
-    <div>
-        <label for="teamIdAjout">ID de l'équipe:</label>
-        <input type="text" id="teamIdAjout" name="teamIdAjout">
-    </div>
-    <div>
-        <label for="nomJoueur">Nom du joueur:</label>
-        <input type="text" id="nomJoueur" name="nomJoueur">
-    </div>
-    <div>
-        <label for="positionJoueur">Position du joueur:</label>
-        <input type="text" id="positionJoueur" name="positionJoueur">
-    </div>
-    <div>
-        <label for="numeroJoueur">Numéro du joueur:</label>
-        <input type="number" id="numeroJoueur" name="numeroJoueur">
-    </div>
-    <button id="addPlayerButton" class="btn btn-success">Ajouter Joueur</button>
-
-    <!-- Pour modifier un joueur -->
-    <h2 class="mt-4">Modifier un joueur</h2>
-    <form id="update-player-form" class="mb-4">
-        <div class="form-row">
-            <div class="col">
-                <input type="number" id="update-team-id" class="form-control" placeholder="ID de l'équipe" required>
-            </div>
-            <div class="col">
-                <input type="number" id="update-player-id" class="form-control" placeholder="ID du joueur" required>
-            </div>
-            <div class="col">
-                <button type="button" id="load-player-button" class="btn btn-info">Charger le joueur</button>
+    <!-- Modal d'ajout de joueur -->
+    <div class="modal fade" id="addPlayerModal" tabindex="-1" role="dialog" aria-labelledby="addPlayerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPlayerModalLabel">Ajouter un joueur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulaire pour ajouter un joueur -->
+                    <div class="form-group">
+                        <label for="playerName">Nom du joueur :</label>
+                        <input type="text" class="form-control" id="playerName" placeholder="Entrez le nom du joueur">
+                    </div>
+                    <div class="form-group">
+                        <label for="selectPosition">Position du joueur :</label>
+                        <select class="form-control" id="selectPosition">
+                            <!-- Options des postes, générées dynamiquement -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="selectNumber">Numéro du joueur :</label>
+                        <select class="form-control" id="selectNumber">
+                            <!-- Options des numéros, générées dynamiquement -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" onclick="addPlayer()">Ajouter</button>
+                </div>
             </div>
         </div>
-        <div id="update-player-fields" style="display:none;">
-            <div class="form-row mt-3">
-                <div class="col">
-                    <input type="text" id="update-player-name" class="form-control" placeholder="Nom du joueur"
-                        required>
-                </div>
-                <div class="col">
-                    <input type="text" id="update-player-position" class="form-control" placeholder="Position du joueur"
-                        required>
-                </div>
-                <div class="col">
-                    <input type="number" id="update-player-number" class="form-control" placeholder="Numéro du joueur"
-                        required>
-                </div>
-                <button type="submit" class="btn btn-warning">Mettre à jour</button>
-            </div>
-        </div>
-    </form>
-
-    <!-- Pour supprimer un joueur -->
-    <h2 class="mt-4">Supprimer un joueur</h2>
-    <div>
-        <label for="teamIdDelete">ID de l'équipe:</label>
-        <input type="text" id="teamIdDelete" name="teamIdDelete">
     </div>
-    <div>
-        <label for="playerIdDelete">ID du joueur:</label>
-        <input type="text" id="playerIdDelete" name="playerIdDelete">
-    </div>
-    <button id="deletePlayerButton" class="btn btn-danger">Supprimer Joueur</button>
 
-    
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         var token = sessionStorage.getItem('token'); // Récupération du token
 
         $(document).ready(function () {
-            // Action du bouton "Rechercher équipe"
-            $('#searchTeamButton').click(function () {
-                var teamId = $('#teamIdEquipe').val();
-
-                // Requête AJAX pour récupérer l'équipe par son ID
+            // Fonction pour charger les équipes avec leurs joueurs
+            function loadTeamsWithPlayers() {
                 $.ajax({
-                    url: "https://localhost:7162/Equipe/" + teamId,
+                    url: "https://localhost:7162/Equipe",
                     type: "GET",
                     headers: {
                         "Authorization": "Bearer " + token,
                         "accept": "application/json"
                     },
-                    success: function (equipeResponse) {
-                        console.log("Équipe récupérée :", equipeResponse);
+                    success: function (equipes) {
+                        console.log("Équipes récupérées :", equipes);
 
                         // Vider le conteneur d'équipes
                         $('#teams-container').empty();
 
-                        // Vérifier si l'équipeResponse contient le nom de l'équipe
-                        if (equipeResponse.name) {
-                            // Affichage des informations de l'équipe
-                            var equipeHTML = '<div class="equipe">';
-                            equipeHTML += '<h3>Équipe ID : ' + equipeResponse.id + '</h3>';
-                            equipeHTML += '<h4>Nom de l\'équipe : ' + equipeResponse.name + '</h4>';
+                        // Pour chaque équipe, afficher un tableau avec ses joueurs
+                        equipes.forEach(function (equipe) {
+                            var equipeHTML = '<div class="equipe mt-4">';
+                            equipeHTML += '<h2>' + equipe.name + '</h2>';
+                            equipeHTML += '<table class="table table-bordered">';
+                            equipeHTML += '<thead>';
+                            equipeHTML += '<tr>';
+                            equipeHTML += '<th>ID</th>';
+                            equipeHTML += '<th>Nom du joueur</th>';
+                            equipeHTML += '<th>Position</th>';
+                            equipeHTML += '<th>Numéro</th>';
+                            equipeHTML += '<th>Actions</th>';
+                            equipeHTML += '</tr>';
+                            equipeHTML += '</thead>';
+                            equipeHTML += '<tbody>';
+
+                            // Afficher les joueurs de l'équipe
+                            if (equipe.joueurs && equipe.joueurs.length > 0) {
+                                equipe.joueurs.forEach(function (joueur) {
+                                    equipeHTML += '<tr>';
+                                    equipeHTML += '<td>' + joueur.id + '</td>';
+                                    equipeHTML += '<td>' + joueur.nom + '</td>';
+                                    equipeHTML += '<td>' + joueur.position + '</td>';
+                                    equipeHTML += '<td>' + joueur.numero + '</td>';
+                                    equipeHTML += '<td>';
+                                    equipeHTML += '<button class="btn btn-warning btn-sm mr-2" onclick="openEditPlayerModal(' + equipe.id + ', ' + joueur.id + ')">Modifier</button>';
+                                    equipeHTML += '<button class="btn btn-danger btn-sm" onclick="confirmDeletePlayer(' + equipe.id + ', ' + joueur.id + ')">Supprimer</button>';
+                                    equipeHTML += '</td>';
+                                    equipeHTML += '</tr>';
+                                });
+                            } else {
+                                equipeHTML += '<tr><td colspan="5">Aucun joueur trouvé pour cette équipe.</td></tr>';
+                            }
+
+                            equipeHTML += '</tbody>';
+                            equipeHTML += '</table>';
+
+                            // Bouton "Ajouter un joueur" pour chaque équipe
+                            equipeHTML += '<button class="btn btn-success" onclick="openAddPlayerModal(' + equipe.id + ')">Ajouter un joueur à ' + equipe.name + '</button>';
+
                             equipeHTML += '</div>';
 
-                            // Affichage des joueurs de l'équipe
-                            if (equipeResponse.joueurs && equipeResponse.joueurs.length > 0) {
-                                equipeHTML += '<ul>';
-                                equipeResponse.joueurs.forEach(function (joueur) {
-                                    equipeHTML += '<li>' + joueur.nom + ' (' + joueur.position + ' - Numéro ' + joueur.numero + ')</li>';
-                                });
-                                equipeHTML += '</ul>';
-                            } else {
-                                equipeHTML += '<p>Aucun joueur trouvé pour cette équipe.</p>';
-                            }
+                            // Ajouter le tableau d'équipe à #teams-container
                             $('#teams-container').append(equipeHTML);
-                        } else {
-                            // Affichage d'un message si le nom de l'équipe n'est pas disponible
-                            var errorMessage = '<p>Aucun nom d\'équipe trouvé pour l\'ID spécifié.</p>';
-                            $('#teams-container').append(errorMessage);
-                        }
+                        });
                     },
                     error: function (xhr, status, error) {
-                        console.error('Erreur lors de la requête AJAX pour récupérer l\'équipe:', error);
+                        console.error('Erreur lors de la récupération des équipes avec joueurs:', error);
                     }
                 });
-            });
+            }
 
-            // Action du bouton "Rechercher joueur"
-            $('#searchPlayerButton').click(function () {
-                var teamId = $('#teamIdJoueur').val();
-                var playerId = $('#playerId').val();
+            // Charger les équipes avec leurs joueurs au chargement de la page
+            loadTeamsWithPlayers();
 
-                // Requête AJAX pour récupérer le joueur spécifique par son ID
-                $.ajax({
-                    url: "https://localhost:7162/Equipe/" + teamId + "/joueurs/" + playerId,
-                    type: "GET",
-                    headers: {
-                        "Authorization": "Bearer " + token,
-                        "accept": "application/json"
-                    },
-                    success: function (joueurResponse) {
-                        console.log("Requête AJAX GET joueur réussie", joueurResponse);
+            // Fonction pour ouvrir la fenêtre modale d'ajout de joueur
+            window.openAddPlayerModal = function (teamId) {
+                // Réinitialiser les listes déroulantes à chaque ouverture de la modale
+                $('#selectPosition').empty();
+                $('#selectNumber').empty();
 
-                        // Vider le conteneur d'équipes
-                        $('#teams-container2').empty();
-
-                        // Affichage des informations du joueur
-                        var joueurHTML = '<div class="joueur">';
-                        joueurHTML += '<h3>Joueur ID : ' + joueurResponse.id + '</h3>';
-                        joueurHTML += '<h4>Nom du joueur : ' + joueurResponse.nom + '</h4>';
-                        joueurHTML += '<p>Position : ' + joueurResponse.position + '</p>';
-                        joueurHTML += '<p>Numéro : ' + joueurResponse.numero + '</p>';
-                        joueurHTML += '</div>';
-
-                        $('#teams-container2').append(joueurHTML);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Erreur lors de la requête AJAX GET joueur:', error);
-                    }
-                });
-            });
-
-            // Action du bouton "Ajouter joueur"
-            $('#addPlayerButton').click(function () {
-                var teamId = $('#teamIdAjout').val();
-                var nomJoueur = $('#nomJoueur').val();
-                var positionJoueur = $('#positionJoueur').val();
-                var numeroJoueur = $('#numeroJoueur').val();
-
-                // Données du joueur à ajouter
-                var dataToAdd = {
-                    nom: nomJoueur,
-                    position: positionJoueur,
-                    numero: numeroJoueur
+                // Remplir la liste déroulante des postes disponibles
+                var positions = {
+                    "Pilier": [1, 3],
+                    "Talonneur": [2],
+                    "Deuxième ligne": [4, 5],
+                    "Troisième ligne": [6, 7, 8],
+                    "Demi de mêlée": [9],
+                    "Demi d'ouverture": [10],
+                    "Centre": [12, 13],
+                    "Ailier": [11, 14],
+                    "Arrière": [15]
                 };
 
-                // Requête AJAX POST pour ajouter le joueur à l'équipe spécifiée
-                $.ajax({
-                    url: "https://localhost:7162/Equipe/" + teamId + "/joueurs",
-                    type: "POST",
-                    headers: {
-                        "Authorization": "Bearer " + token,
-                        "Content-Type": "application/json"
-                    },
-                    data: JSON.stringify(dataToAdd),
-                    success: function (response) {
-                        console.log("Requête AJAX POST joueur réussie :", response);
-                        alert("Joueur ajouté avec succès à l'équipe !");
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Erreur lors de la requête AJAX POST joueur:', error);
-                        alert("Erreur lors de l'ajout du joueur : " + error);
-                    }
+                $.each(positions, function (position, numeros) {
+                    $('#selectPosition').append($('<option>', {
+                        value: position,
+                        text: position
+                    }));
                 });
-            });
 
-            // Fonction pour charger les détails d'un joueur pour modification
-            $('#load-player-button').click(function () {
-                var teamId = $('#update-team-id').val();
-                var playerId = $('#update-player-id').val();
-                var token = sessionStorage.getItem('token'); // Récupération du token
+                // Remplir la liste déroulante des numéros disponibles
+                var numeros = [];
+                for (var i = 1; i <= 23; i++) {
+                    numeros.push(i);
+                }
 
-                $.ajax({
-                    url: 'https://localhost:7162/Equipe/' + teamId + '/joueurs/' + playerId,
-                    type: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    success: function (data) {
-                        $('#update-player-name').val(data.nom);
-                        $('#update-player-position').val(data.position);
-                        $('#update-player-number').val(data.numero);
-                        $('#update-player-fields').show();
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Erreur lors du chargement du joueur:', textStatus, errorThrown);
-                    }
+                $.each(numeros, function (index, numero) {
+                    $('#selectNumber').append($('<option>', {
+                        value: numero,
+                        text: numero
+                    }));
                 });
-            });
 
-            // Fonction pour mettre à jour un joueur
-            $('#update-player-form').submit(function (event) {
-                event.preventDefault();
+                // Stocker l'identifiant de l'équipe dans un attribut de la modale
+                $('#addPlayerModal').data('team-id', teamId);
 
-                var teamId = $('#update-team-id').val();
-                var playerId = $('#update-player-id').val();
-                var updatedPlayer = {
-                    id: parseInt(playerId),
-                    nom: $('#update-player-name').val(),
-                    position: $('#update-player-position').val(),
-                    numero: parseInt($('#update-player-number').val())
-                };
-                var token = sessionStorage.getItem('token'); // Récupération du token
+                // Ouvrir la modale
+                $('#addPlayerModal').modal('show');
+            }
 
-                $.ajax({
-                    url: 'https://localhost:7162/Equipe/' + teamId + '/joueurs/' + playerId,
-                    type: 'PUT',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    data: JSON.stringify(updatedPlayer),
-                    success: function (data) {
-                        console.log('Joueur mis à jour avec succès:', data);
-                        $('#update-team-id').val('');
-                        $('#update-player-id').val('');
-                        $('#update-player-name').val('');
-                        $('#update-player-position').val('');
-                        $('#update-player-number').val('');
-                        $('#update-player-fields').hide();
-                        $('#status-message').text('Joueur mis à jour avec succès').addClass('text-success').fadeIn();
-                        setTimeout(function () {
-                            $('#status-message').fadeOut().removeClass('text-success').text('');
-                        }, 3000);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Erreur lors de la mise à jour du joueur:', textStatus, errorThrown);
-                        $('#status-message').text('Erreur lors de la mise à jour du joueur').addClass('text-danger').fadeIn();
-                        setTimeout(function () {
-                            $('#status-message').fadeOut().removeClass('text-danger').text('');
-                        }, 3000);
-                    }
-                });
-            });
+            // Fonction pour ajouter un joueur à une équipe spécifique
+            window.addPlayer = function () {
+                var teamId = $('#addPlayerModal').data('team-id');
+                var nomJoueur = $('#playerName').val();
 
-            // Action du bouton "Supprimer joueur"
-            $('#deletePlayerButton').click(function () {
-                var teamId = $('#teamIdDelete').val();
-                var playerId = $('#playerIdDelete').val();
+                // Récupérer le poste sélectionné
+                var positionJoueur = $('#selectPosition').val();
 
-                // Afficher une boîte de dialogue de confirmation
-                if (confirm("Êtes-vous sûr de vouloir supprimer ce joueur ?")) {
-                    // Requête AJAX DELETE pour supprimer le joueur spécifique
+                // Récupérer le numéro sélectionné
+                var numeroJoueur = $('#selectNumber').val();
+
+                // Vérifier si toutes les informations nécessaires sont présentes
+                if (nomJoueur && positionJoueur && numeroJoueur) {
+                    // Construire l'objet de données à envoyer
+                    var dataToAdd = {
+                        nom: nomJoueur,
+                        position: positionJoueur,
+                        numero: parseInt(numeroJoueur)
+                    };
+
+                    // Effectuer une requête AJAX POST pour ajouter le joueur
                     $.ajax({
-                        url: "https://localhost:7162/Equipe/" + teamId + "/joueurs/" + playerId,
-                        type: "DELETE",
+                        url: "https://localhost:7162/Equipe/" + teamId + "/joueurs",
+                        type: "POST",
                         headers: {
                             "Authorization": "Bearer " + token,
-                            "accept": "*/*"
+                            "Content-Type": "application/json"
                         },
+                        data: JSON.stringify(dataToAdd),
                         success: function (response) {
-                            console.log("Suppression du joueur réussie :", response);
-                            alert("Joueur supprimé avec succès !");
+                            console.log("Joueur ajouté avec succès :", response);
+                            // Recharger les équipes après l'ajout
+                            $('#addPlayerModal').modal('hide');
+                            loadTeamsWithPlayers();
                         },
                         error: function (xhr, status, error) {
-                            console.error('Erreur lors de la suppression du joueur:', error);
-                            alert("Erreur lors de la suppression du joueur : " + error);
+                            console.error('Erreur lors de l\'ajout du joueur:', error);
+                            alert("Erreur lors de l'ajout du joueur : " + error);
                         }
                     });
                 } else {
-                    // Si l'utilisateur annule la suppression
+                    alert("Veuillez remplir toutes les informations du joueur.");
+                }
+            }
+
+
+            // Fonction pour confirmer la suppression d'un joueur
+            window.confirmDeletePlayer = function (teamId, playerId) {
+                if (confirm("Êtes-vous sûr de vouloir supprimer ce joueur ?")) {
+                    deletePlayer(teamId, playerId);
+                } else {
                     console.log("Suppression annulée par l'utilisateur");
                 }
+            }
+
+            // Fonction pour supprimer un joueur spécifique
+            function deletePlayer(teamId, playerId) {
+                $.ajax({
+                    url: "https://localhost:7162/Equipe/" + teamId + "/joueurs/" + playerId,
+                    type: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "accept": "*/*"
+                    },
+                    success: function (response) {
+                        console.log("Suppression du joueur réussie :", response);
+                        loadTeamsWithPlayers(); // Recharger les équipes après la suppression
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Erreur lors de la suppression du joueur:', error);
+                        alert("Erreur lors de la suppression du joueur : " + error);
+                    }
+                });
+            }
+
+            // Afficher le tableau des postes et numéros au clic sur le bouton
+            $('#showPositionsBtn').click(function () {
+                $('#positionsTable').toggle();
             });
         });
     </script>
