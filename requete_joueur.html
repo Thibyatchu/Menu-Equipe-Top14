@@ -135,6 +135,44 @@
         </div>
     </div>
 
+    <!-- Modal de modification de joueur -->
+<div class="modal fade" id="editPlayerModal" tabindex="-1" role="dialog" aria-labelledby="editPlayerModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="editPlayerModalLabel">Modifier un joueur</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Formulaire pour modifier un joueur -->
+            <div class="form-group">
+                <label for="editPlayerName">Nom du joueur :</label>
+                <input type="text" class="form-control" id="editPlayerName" placeholder="Entrez le nom du joueur">
+            </div>
+            <div class="form-group">
+                <label for="editSelectPosition">Position du joueur :</label>
+                <select class="form-control" id="editSelectPosition">
+                    <!-- Options des postes, générées dynamiquement -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editSelectNumber">Numéro du joueur :</label>
+                <select class="form-control" id="editSelectNumber">
+                    <!-- Options des numéros, générées dynamiquement -->
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-primary" onclick="updatePlayer()">Mettre à jour</button>
+        </div>
+    </div>
+</div>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -302,6 +340,114 @@
                     alert("Veuillez remplir toutes les informations du joueur.");
                 }
             }
+
+            window.updatePlayer = function () {
+    var teamId = $('#editPlayerModal').data('team-id');
+    var playerId = $('#editPlayerModal').data('player-id');
+    var nomJoueur = $('#editPlayerName').val();
+    var positionJoueur = $('#editSelectPosition').val();
+    var numeroJoueur = $('#editSelectNumber').val();
+
+    if (nomJoueur && positionJoueur && numeroJoueur) {
+        var dataToUpdate = {
+            id: playerId,
+            nom: nomJoueur,
+            position: positionJoueur,
+            numero: parseInt(numeroJoueur)
+        };
+
+        console.log("Données à envoyer:", dataToUpdate);
+
+        $.ajax({
+            url: "https://localhost:7162/Equipe/" + teamId + "/joueurs/" + playerId,
+            type: "PUT",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify(dataToUpdate),
+            success: function (response) {
+                console.log("Joueur mis à jour avec succès :", response);
+                $('#editPlayerModal').modal('hide');
+                loadTeamsWithPlayers();
+            },
+            error: function (xhr, status, error) {
+                console.error('Erreur lors de la mise à jour du joueur:', error);
+                console.log('Réponse du serveur:', xhr.responseText);
+                alert("Erreur lors de la mise à jour du joueur : " + error);
+            }
+        });
+    } else {
+        alert("Veuillez remplir toutes les informations du joueur.");
+    }
+}
+
+
+window.openEditPlayerModal = function (teamId, playerId) {
+    // Réinitialiser les listes déroulantes à chaque ouverture de la modale
+    $('#editSelectPosition').empty();
+    $('#editSelectNumber').empty();
+
+    // Remplir la liste déroulante des postes disponibles
+    var positions = {
+        "Pilier": [1, 3],
+        "Talonneur": [2],
+        "Deuxième ligne": [4, 5],
+        "Troisième ligne": [6, 7, 8],
+        "Demi de mêlée": [9],
+        "Demi d'ouverture": [10],
+        "Centre": [12, 13],
+        "Ailier": [11, 14],
+        "Arrière": [15]
+    };
+
+    $.each(positions, function (position, numeros) {
+        $('#editSelectPosition').append($('<option>', {
+            value: position,
+            text: position
+        }));
+    });
+
+    // Remplir la liste déroulante des numéros disponibles
+    var numeros = [];
+    for (var i = 1; i <= 23; i++) {
+        numeros.push(i);
+    }
+
+    $.each(numeros, function (index, numero) {
+        $('#editSelectNumber').append($('<option>', {
+            value: numero,
+            text: numero
+        }));
+    });
+
+    // Stocker les identifiants de l'équipe et du joueur dans des attributs de la modale
+    $('#editPlayerModal').data('team-id', teamId);
+    $('#editPlayerModal').data('player-id', playerId);
+
+    // Récupérer les informations actuelles du joueur
+    $.ajax({
+        url: "https://localhost:7162/Equipe/" + teamId + "/joueurs/" + playerId,
+        type: "GET",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "accept": "application/json"
+        },
+        success: function (joueur) {
+            // Pré-remplir les champs du formulaire avec les informations actuelles
+            $('#editPlayerName').val(joueur.nom);
+            $('#editSelectPosition').val(joueur.position);
+            $('#editSelectNumber').val(joueur.numero);
+
+            // Ouvrir la modale
+            $('#editPlayerModal').modal('show');
+        },
+        error: function (xhr, status, error) {
+            console.error('Erreur lors de la récupération des informations du joueur:', error);
+            alert("Erreur lors de la récupération des informations du joueur : " + error);
+        }
+    });
+}
 
 
             // Fonction pour confirmer la suppression d'un joueur

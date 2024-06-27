@@ -51,8 +51,36 @@
             <!-- Les équipes seront chargées ici -->
         </tbody>
     </table>
-    <button type="button" class="btn btn-success" onclick="window.location.href='creer_equipe.html'">Ajouter une
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createTeamModal">Ajouter une
         équipe</button>
+
+    <!-- Modal pour créer une équipe -->
+    <div class="modal fade" id="createTeamModal" tabindex="-1" role="dialog" aria-labelledby="createTeamModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTeamModalLabel">Créer une équipe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-team-form">
+                        <div class="form-group">
+                            <label for="team-name">Nom de l'équipe</label>
+                            <input type="text" class="form-control" id="team-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="team-city">Ville de l'équipe</label>
+                            <input type="text" class="form-control" id="team-city" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Créer l'équipe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal pour modifier une équipe -->
     <div class="modal fade" id="editTeamModal" tabindex="-1" role="dialog" aria-labelledby="editTeamModalLabel"
@@ -220,6 +248,40 @@
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error('Erreur lors de la suppression de l\'équipe:', textStatus, errorThrown);
+                }
+            });
+        });
+
+        $('#create-team-form').submit(function (event) {
+            event.preventDefault();
+
+            var teamName = $('#team-name').val();
+            var teamCity = $('#team-city').val();
+            var token = sessionStorage.getItem('token');
+
+            var newTeam = {
+                id: 0,
+                name: teamName,
+                ville: teamCity,
+                joueurs: []
+            };
+
+            $.ajax({
+                url: 'https://localhost:7162/Equipe',
+                type: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(newTeam),
+                success: function (response) {
+                    console.log('Équipe créée avec succès:', response);
+                    $('#createTeamModal').modal('hide');
+                    loadTeams();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Erreur lors de la création de l\'équipe:', textStatus, errorThrown);
                 }
             });
         });
