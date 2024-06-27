@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Équipes Top 14 - Accueil</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet"> <!-- Référence au fichier CSS externe -->
+</head>
+
+<body class="container py-4">
+
+    <div class="cover-container">
+        <main role="main" class="inner">
+            <h1 class="cover-heading">Créez un nouveau compte</h1>
+        </main>
+    </div>
+
+    <div class="cover-container">
+        <main role="main" class="inner">
+            <!-- Formulaire pour créer un utilisateur -->
+            <h2 class="mt-5">Créer un Utilisateur</h2>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="user-username">Nom d'utilisateur :</label>
+                    <input type="text" class="form-control" id="user-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Mot de passe :</label>
+                    <input type="password" class="form-control" id="user-password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-success">Créer</button>
+                <button id="loginPage" type="button" class="btn btn-primary ml-2">Se connecter</button>
+            </form>
+            <div id="response-container" class="mt-3"></div>
+            <div id="error-container" class="mt-3" style="color: red;"></div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Fonction pour créer un utilisateur
+        $(document).ready(function () {
+            $('#userForm').on('submit', function (event) {
+                event.preventDefault(); // Empêche le rechargement de la page
+
+                // Récupérer les données du formulaire
+                var username = $('#user-username').val();
+                var password = $('#user-password').val();
+
+                // Données à envoyer
+                var dataToSend = {
+                    username: username,
+                    password: password
+                };
+
+                // Requête AJAX avec jQuery
+                $.ajax({
+                    url: "https://localhost:7162/Auth/admin",
+                    type: "POST",
+                    headers: {
+                        "accept": "text/plain",
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + sessionStorage.getItem('token') // Utilisation du token stocké
+                    },
+                    data: JSON.stringify(dataToSend),
+                    success: function (response) {
+                        console.log("Réponse reçue :", response);
+                        $('#response-container').html("L'utilisateur <strong>" + username + "</strong> a été créé avec succès !");
+                        $('#error-container').text("");
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Erreur lors de la requête :", error);
+                        $('#response-container').text("");
+                        $('#error-container').text("Erreur : " + error);
+                    }
+                });
+            });
+
+            // Redirection vers la page de connexion
+            $('#loginPage').click(function () {
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</body>
+
+</html>

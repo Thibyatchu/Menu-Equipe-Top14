@@ -5,14 +5,11 @@
     <meta charset="UTF-8">
     <title>Requêtes HTTP</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Intégration de Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Référence au fichier CSS externe -->
     <link href="styles.css" rel="stylesheet">
 </head>
 
 <body class="container py-4">
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Équipes Top 14</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -27,8 +24,7 @@
                         Pages
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="index.html">Menu</a>
-                        <a class="dropdown-item" href="admin.html">Connexion</a>
+                        <a class="dropdown-item" href="menu.html">Menu</a>
                         <a class="dropdown-item" href="requete_joueur.html">Joueur</a>
                     </div>
                 </li>
@@ -36,209 +32,112 @@
         </div>
     </nav>
 
-    <!-- Message de bienvenue centré -->
     <div class="text-center mb-4">
-        <h1>Bienvenue dans la partie modification des Équipes du Top 14</h1>
+        <h1>Gestion des Équipes du Top 14</h1>
     </div>
 
-    <!-- Pour ajouter une équipe -->
-    <h2 class="mt-4">Ajouter une équipe</h2>
-    <form id="add-team-form" class="mb-4">
-        <div class="form-row">
-            <div class="col">
-                <input type="text" id="team-name" class="form-control" placeholder="Nom de l'équipe" required>
-            </div>
-            <div class="col">
-                <input type="text" id="team-city" class="form-control" placeholder="Ville de l'équipe" required>
-            </div>
-            <button type="submit" class="btn btn-success">Ajouter</button>
-        </div>
-    </form>
-
-    <!-- Pour modifier une équipe -->
-    <h2>Modifier une équipe</h2>
-    <form id="update-team-form" class="mb-4">
-        <div class="form-row">
-            <div class="col">
-                <input type="number" id="update-team-id" class="form-control" placeholder="ID de l'équipe" required>
-            </div>
-            <div class="col">
-                <button type="button" id="load-team-button" class="btn btn-info">Afficher l'équipe</button>
-            </div>
-        </div>
-        <div id="update-team-fields" style="display:none;">
-            <div class="form-row mt-3">
-                <div class="col">
-                    <input type="text" id="update-team-name" class="form-control" placeholder="Nom de l'équipe"
-                        required>
-                </div>
-                <div class="col">
-                    <input type="text" id="update-team-city" class="form-control" placeholder="Ville de l'équipe"
-                        required>
-                </div>
-                <button type="submit" class="btn btn-warning">Mettre à jour</button>
-            </div>
-        </div>
-    </form>
-
-    <!-- Pour supprimer une équipe -->
-    <h2>Supprimer une équipe</h2>
-    <form id="delete-team-form">
-        <div class="form-row">
-            <div class="col">
-                <input type="number" id="delete-team-id" class="form-control" placeholder="ID de l'équipe à supprimer"
-                    required>
-            </div>
-            <button type="button" id="confirm-delete-button" class="btn btn-danger">Supprimer</button>
-        </div>
-    </form>
-
-
-    <!-- Affichage de toutes les équipes -->
     <h2 class="mt-4">Équipes du Top 14</h2>
-    <form id="load-team-form">
-        <div id="teams-container">
-            <!-- Ici seront affichées les équipes existantes -->
-        </div>
-    </form>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom de l'équipe</th>
+                <th>Ville de l'équipe</th>
+                <th>Nombre de joueurs</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="teams-container">
+            <!-- Les équipes seront chargées ici -->
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createTeamModal">Ajouter une
+        équipe</button>
 
-    <div id="status-message" class="mt-4"></div>
+    <!-- Modal pour créer une équipe -->
+    <div class="modal fade" id="createTeamModal" tabindex="-1" role="dialog" aria-labelledby="createTeamModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTeamModalLabel">Créer une équipe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-team-form">
+                        <div class="form-group">
+                            <label for="team-name">Nom de l'équipe</label>
+                            <input type="text" class="form-control" id="team-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="team-city">Ville de l'équipe</label>
+                            <input type="text" class="form-control" id="team-city" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Créer l'équipe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour modifier une équipe -->
+    <div class="modal fade" id="editTeamModal" tabindex="-1" role="dialog" aria-labelledby="editTeamModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTeamModalLabel">Modifier l'équipe</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="update-team-form">
+                        <input type="hidden" id="edit-team-id">
+                        <div class="form-group">
+                            <label for="edit-team-name">Nom de l'équipe</label>
+                            <input type="text" class="form-control" id="edit-team-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-team-city">Ville de l'équipe</label>
+                            <input type="text" class="form-control" id="edit-team-city" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning">Mettre à jour</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour confirmer la suppression -->
+    <div class="modal fade" id="deleteTeamModal" tabindex="-1" aria-labelledby="deleteTeamModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteTeamModalLabel">Confirmation de la suppression</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer cette équipe ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-button">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Fonction pour ajouter une nouvelle équipe
-        $('#add-team-form').submit(function (event) {
-            console.log("fonction add team");
-            event.preventDefault();
-
-            var teamName = $('#team-name').val();
-            var teamCity = $('#team-city').val();
-            var token = sessionStorage.getItem('token'); // Récupération du token
-
-            var newTeam = {
-                id: 0, // Ajout de l'id pour correspondre à la structure attendue par l'API
-                name: teamName,
-                ville: teamCity,
-                joueurs: [] // Vous pouvez ajouter les joueurs ici si nécessaire
-            };
-
-            $.ajax({
-                url: 'https://localhost:7162/Equipe',
-                type: 'POST',
-                headers: {
-                    "accept": "*/*",
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json"
-                },
-                data: JSON.stringify(newTeam),
-                success: function (response) {
-                    console.log('Équipe ajoutée avec succès:', response);
-                    loadTeams(); // Recharger les équipes après l'ajout
-                    $('#team-name').val('');
-                    $('#team-city').val('');
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Erreur lors de l\'ajout de l\'équipe:', textStatus, errorThrown);
-                }
-            });
-        });
-
-        // Fonction pour charger les détails d'une équipe pour modification
-        $('#load-team-button').click(function () {
-            console.log("fonction load team");
-            var teamId = $('#update-team-id').val();
-            var token = sessionStorage.getItem('token'); // Récupération du token
-
-            $.ajax({
-                url: 'https://localhost:7162/Equipe/' + teamId,
-                type: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                success: function (data) {
-                    $('#update-team-name').val(data.name);
-                    $('#update-team-city').val(data.ville);
-                    $('#update-team-fields').show();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Erreur lors du chargement de l\'équipe:', textStatus, errorThrown);
-                }
-            });
-        });
-
-        // Fonction pour mettre à jour une équipe
-        $('#update-team-form').submit(function (event) {
-            console.log("fonction update team");
-            event.preventDefault();
-
-            var teamId = $('#update-team-id').val();
-            var updatedTeam = {
-                id: parseInt(teamId),
-                name: $('#update-team-name').val(),
-                ville: $('#update-team-city').val(),
-                joueurs: [] // Vous pouvez ajouter les joueurs ici si nécessaire
-            };
-            var token = sessionStorage.getItem('token'); // Récupération du token
-
-            $.ajax({
-                url: 'https://localhost:7162/Equipe/' + teamId,
-                type: 'PUT',
-                headers: {
-                    'Accept': '*/*',
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                },
-                data: JSON.stringify(updatedTeam),
-                success: function (data) {
-                    console.log('Équipe mise à jour avec succès:', data);
-                    loadTeams(); // Recharger les équipes après la mise à jour
-                    $('#update-team-id').val('');
-                    $('#update-team-name').val('');
-                    $('#update-team-city').val('');
-                    $('#update-team-fields').hide();
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Erreur lors de la mise à jour de l\'équipe:', textStatus, errorThrown);
-                }
-            });
-        });
-
-        // Fonction pour supprimer une équipe
-        $('#confirm-delete-button').click(function () {
-            var teamId = $('#delete-team-id').val();
-            var token = sessionStorage.getItem('token'); // Récupération du token
-
-            // Afficher une boîte de dialogue de confirmation
-            if (confirm("Êtes-vous sûr de vouloir supprimer cette équipe ?")) {
-                // Requête AJAX DELETE pour supprimer l'équipe spécifiée
-                $.ajax({
-                    url: 'https://localhost:7162/Equipe/' + teamId,
-                    type: 'DELETE',
-                    headers: {
-                        'Accept': '*/*',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    success: function (response) {
-                        console.log('Équipe supprimée avec succès:', response);
-                        loadTeams(); // Recharger les équipes après la suppression
-                        $('#delete-team-id').val('');
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Erreur lors de la suppression de l\'équipe:', textStatus, errorThrown);
-                    }
-                });
-            } else {
-                // Si l'utilisateur annule la suppression
-                console.log("Suppression annulée par l'utilisateur");
-            }
-        });
-
-
-        // Fonction pour charger et afficher les équipes
         function loadTeams() {
-            var token = sessionStorage.getItem('token'); // Récupération du token
+            var token = sessionStorage.getItem('token');
 
             $.ajax({
                 url: 'https://localhost:7162/Equipe',
@@ -249,13 +148,19 @@
                 },
                 success: function (data) {
                     console.log('Équipes récupérées:', data);
-                    $('#teams-container').empty(); // Vider le conteneur avant d'ajouter les nouvelles équipes
+                    $('#teams-container').empty();
 
                     data.forEach(function (team) {
-                        var teamHtml = '<div class="team">';
-                        teamHtml += '<h3>' + team.name + '</h3>';
-                        teamHtml += '<p>Ville: ' + team.ville + '</p>';
-                        teamHtml += '</div>';
+                        var teamHtml = '<tr>';
+                        teamHtml += '<td>' + team.id + '</td>';
+                        teamHtml += '<td>' + team.name + '</td>';
+                        teamHtml += '<td>' + team.ville + '</td>';
+                        teamHtml += '<td>' + (team.joueurs ? team.joueurs.length : 0) + '</td>';
+                        teamHtml += '<td>';
+                        teamHtml += '<button class="btn btn-warning btn-sm mr-2" onclick="editTeam(' + team.id + ')">Modifier</button>';
+                        teamHtml += '<button class="btn btn-danger btn-sm" onclick="confirmDeleteTeam(' + team.id + ')">Supprimer</button>';
+                        teamHtml += '</td>';
+                        teamHtml += '</tr>';
                         $('#teams-container').append(teamHtml);
                     });
                 },
@@ -265,7 +170,122 @@
             });
         }
 
-        // Charger les équipes au chargement de la page
+        function editTeam(teamId) {
+            var token = sessionStorage.getItem('token');
+
+            $.ajax({
+                url: 'https://localhost:7162/Equipe/' + teamId,
+                type: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function (data) {
+                    $('#edit-team-id').val(data.id);
+                    $('#edit-team-name').val(data.name);
+                    $('#edit-team-city').val(data.ville);
+                    $('#editTeamModal').modal('show');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Erreur lors du chargement de l\'équipe:', textStatus, errorThrown);
+                }
+            });
+        }
+
+        $('#update-team-form').submit(function (event) {
+            event.preventDefault();
+
+            var teamId = $('#edit-team-id').val();
+            var updatedTeam = {
+                id: parseInt(teamId),
+                name: $('#edit-team-name').val(),
+                ville: $('#edit-team-city').val(),
+                joueurs: []  // Assurez-vous que cette propriété correspond à ce que le serveur attend
+            };
+
+            var token = sessionStorage.getItem('token');
+
+            $.ajax({
+                url: 'https://localhost:7162/Equipe/' + teamId,
+                type: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json' // Assurez-vous d'ajouter le type de contenu JSON
+                },
+                data: JSON.stringify(updatedTeam), // Convertissez l'objet JavaScript en JSON
+                success: function (data) {
+                    console.log('Équipe mise à jour avec succès:', data);
+                    $('#editTeamModal').modal('hide');
+                    loadTeams();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Erreur lors de la mise à jour de l\'équipe:', textStatus, errorThrown);
+                }
+            });
+        });
+
+        function confirmDeleteTeam(teamId) {
+            $('#confirm-delete-button').data('team-id', teamId);
+            $('#deleteTeamModal').modal('show');
+        }
+
+        $('#confirm-delete-button').click(function () {
+            var teamId = $(this).data('team-id');
+            var token = sessionStorage.getItem('token');
+
+            $.ajax({
+                url: 'https://localhost:7162/Equipe/' + teamId,
+                type: 'DELETE',
+                headers: {
+                    'Accept': '*/*',
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function (response) {
+                    console.log('Équipe supprimée avec succès:', response);
+                    $('#deleteTeamModal').modal('hide');
+                    loadTeams();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Erreur lors de la suppression de l\'équipe:', textStatus, errorThrown);
+                }
+            });
+        });
+
+        $('#create-team-form').submit(function (event) {
+            event.preventDefault();
+
+            var teamName = $('#team-name').val();
+            var teamCity = $('#team-city').val();
+            var token = sessionStorage.getItem('token');
+
+            var newTeam = {
+                id: 0,
+                name: teamName,
+                ville: teamCity,
+                joueurs: []
+            };
+
+            $.ajax({
+                url: 'https://localhost:7162/Equipe',
+                type: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(newTeam),
+                success: function (response) {
+                    console.log('Équipe créée avec succès:', response);
+                    $('#createTeamModal').modal('hide');
+                    loadTeams();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Erreur lors de la création de l\'équipe:', textStatus, errorThrown);
+                }
+            });
+        });
+
         $(document).ready(function () {
             loadTeams();
         });
